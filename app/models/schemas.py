@@ -18,6 +18,7 @@ class Tone(str, Enum):
     ENTHUSIASTIC = "enthusiastic"
     INFORMATIVE = "informative"
     FUN = "fun"
+    PROFESSIONAL = "professional"  # ADD THIS LINE
 
 class Theme(str, Enum):
     CYBERPUNK = "cyberpunk"
@@ -67,7 +68,7 @@ class EmailGenerationResponse(BaseModel):
     subject: str
     body: str
     status: str = "success"
-    model_used: str = "llama-3.1-70b"
+    model_used: str = "llama-3.1-8b-instant"  # Updated to match your actual model
 
 class PosterGenerationResponse(BaseModel):
     image_url: str
@@ -79,7 +80,7 @@ class InvitationGenerationResponse(BaseModel):
     invitation_text: str
     qr_code_url: Optional[str] = None
     status: str = "success"
-    model_used: str = "llama-3.1-70b"
+    model_used: str = "llama-3.1-8b-instant"  # Updated to match your actual model
 
 class ErrorResponse(BaseModel):
     detail: str

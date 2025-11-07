@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, BackgroundTasks, Depends #type:ignore
+from fastapi.responses import JSONResponse #type:ignore
 from sqlalchemy.orm import Session
 from datetime import datetime
 import json
@@ -11,6 +11,7 @@ from ..models.schemas import (
     HealthResponse, ErrorResponse
 )
 from .ai_services import ai_service
+from ..core.config import settings
 from ..models.database import get_db, GenerationHistory
 
 router = APIRouter()
@@ -85,6 +86,27 @@ async def generate_invitation(
         return JSONResponse(content=result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Invitation generation failed: {str(e)}")
+    
+
+@router.get("/debug/config")
+async def debug_config():
+    """Debug endpoint to check configuration"""
+    return {
+        "groq_api_key_loaded": bool(settings.GROQ_API_KEY),
+        "groq_api_key_length": len(settings.GROQ_API_KEY),
+        "groq_api_key_valid": settings.GROQ_API_KEY.startswith('gsk_') if settings.GROQ_API_KEY else False,
+        "hf_token_loaded": bool(settings.HF_API_TOKEN),
+        "env_file_loaded": True
+    }
+
+@router.get("/debug/ai-service")
+async def debug_ai_service():
+    """Debug endpoint to check AI service status"""
+    return {
+        "groq_client_available": ai_service.groq_client is not None,
+        "groq_api_key_in_settings": bool(settings.GROQ_API_KEY),
+        "ai_service_initialized": True
+    }
 
 @router.get("/health", response_model=HealthResponse)
 async def health_check():
